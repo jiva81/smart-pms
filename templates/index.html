@@ -1,8 +1,182 @@
-<!doctype html>
-<html>
-<head><title>Smart PMS</title></head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Patient Management System | Pakenham Hospital</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Reset & Global Styles */
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
+    body { background:#f0f4f8; color:#1f2937; }
+
+    /* Top Navigation */
+    .topnav {
+      width:100%; background:#1e3a8a; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; color:#fff; position:sticky; top:0; z-index:1000;
+    }
+    .topnav h1 { font-size:1.8rem; font-weight:700; }
+    .topnav ul { display:flex; list-style:none; gap:25px; }
+    .topnav ul li a { color:#fff; text-decoration:none; font-weight:500; padding:8px 12px; border-radius:6px; transition:0.3s; }
+    .topnav ul li a:hover { background:#374b8a; }
+
+    /* Main Container */
+    .container { max-width:1200px; margin:30px auto; padding:0 20px; }
+
+    /* Dashboard Cards */
+    .cards { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:30px; }
+    .card {
+      flex:1; min-width:220px; background:#fff; padding:25px; border-radius:12px;
+      box-shadow:0 5px 15px rgba(0,0,0,0.05); transition:0.3s; cursor:pointer;
+    }
+    .card:hover { transform:translateY(-5px); box-shadow:0 10px 20px rgba(0,0,0,0.1); }
+    .card h3 { font-size:1rem; color:#6b7280; margin-bottom:10px; }
+    .card p { font-size:1.6rem; font-weight:700; }
+
+    /* Tables */
+    table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 5px 15px rgba(0,0,0,0.05); margin-bottom:30px; }
+    th, td { padding:15px; text-align:left; border-bottom:1px solid #e5e7eb; }
+    th { background:#f3f4f6; font-weight:600; }
+    tr:hover { background:#f9fafb; }
+
+    .status-critical { color:#dc2626; font-weight:700; }
+    .status-stable { color:#16a34a; font-weight:700; }
+    .status-recovered { color:#2563eb; font-weight:700; }
+
+    /* Search bar */
+    .search-container { margin-bottom:20px; display:flex; justify-content:flex-end; }
+    .search-container input {
+      padding:10px 15px; border-radius:8px; border:1px solid #cbd5e1; width:250px; outline:none;
+    }
+
+    /* Responsive */
+    @media(max-width:900px) {
+      .topnav ul { flex-direction:column; gap:10px; margin-top:10px; }
+      .cards { flex-direction:column; }
+      .search-container { justify-content:center; margin-bottom:15px; }
+    }
+  </style>
+</head>
 <body>
-<h1>Smart Patient Management System</h1>
-<p>Welcome — prototype skeleton</p>
+
+  <!-- Top Navigation -->
+  <div class="topnav">
+    <h1>Pakenham Hospital</h1>
+    <ul>
+      <li><a href="#">Dashboard</a></li>
+      <li><a href="#">Patients</a></li>
+      <li><a href="#">Appointments</a></li>
+      <li><a href="#">Doctors</a></li>
+      <li><a href="#">Reports</a></li>
+      <li><a href="#">Settings</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+
+    <!-- Search -->
+    <div class="search-container">
+      <input type="text" placeholder="Search patients, doctors...">
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="cards">
+      <div class="card">
+        <h3>Total Patients</h3>
+        <p id="total-patients">34</p>
+      </div>
+      <div class="card">
+        <h3>Appointments Today</h3>
+        <p id="today-appointments">12</p>
+      </div>
+      <div class="card">
+        <h3>Available Beds</h3>
+        <p id="available-beds">8</p>
+      </div>
+      <div class="card">
+        <h3>Doctors On Duty</h3>
+        <p id="doctors-duty">5</p>
+      </div>
+    </div>
+
+    <!-- Patient Table -->
+    <h2>Patient List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Gender</th>
+          <th>Room</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="patient-table"></tbody>
+    </table>
+
+    <!-- Appointments Table -->
+    <h2>Upcoming Appointments</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Patient</th>
+          <th>Doctor</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="appointments-table"></tbody>
+    </table>
+
+  </div>
+
+  <!-- JS for dynamic data -->
+  <script>
+    // Patient data
+    const patients = [
+      { name:'John Doe', age:45, gender:'Male', room:'101A', status:'Critical' },
+      { name:'Mary Smith', age:32, gender:'Female', room:'102B', status:'Stable' },
+      { name:'Alex Johnson', age:60, gender:'Male', room:'103C', status:'Recovered' },
+      { name:'Emma Wilson', age:27, gender:'Female', room:'104A', status:'Stable' },
+    ];
+
+    const patientTable = document.getElementById('patient-table');
+    patients.forEach(p => {
+      const row = document.createElement('tr');
+      let statusClass = p.status.toLowerCase();
+      row.innerHTML = `
+        <td>${p.name}</td>
+        <td>${p.age}</td>
+        <td>${p.gender}</td>
+        <td>${p.room}</td>
+        <td class="status-${statusClass}">${p.status}</td>
+      `;
+      patientTable.appendChild(row);
+    });
+
+    // Appointment data
+    const appointments = [
+      { patient:'John Doe', doctor:'Dr. Brown', date:'2025-09-29', time:'10:00 AM', status:'Pending' },
+      { patient:'Mary Smith', doctor:'Dr. Green', date:'2025-09-29', time:'11:00 AM', status:'Confirmed' },
+      { patient:'Alex Johnson', doctor:'Dr. Blue', date:'2025-09-30', time:'09:30 AM', status:'Pending' },
+      { patient:'Emma Wilson', doctor:'Dr. White', date:'2025-09-30', time:'01:00 PM', status:'Confirmed' },
+    ];
+
+    const appointmentsTable = document.getElementById('appointments-table');
+    appointments.forEach(a => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${a.patient}</td>
+        <td>${a.doctor}</td>
+        <td>${a.date}</td>
+        <td>${a.time}</td>
+        <td>${a.status}</td>
+      `;
+      appointmentsTable.appendChild(row);
+    });
+  </script>
+
 </body>
 </html>
